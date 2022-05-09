@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from users.models import User, Employee, Director
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -63,3 +64,15 @@ class DirectorSignupSerializer(serializers.ModelSerializer):
         user.save()
         Director.objects.create(user=user)
         return user
+
+
+class UserTokenObtainPairSerializer(TokenObtainPairSerializer):
+    @classmethod
+    def get_token(cls, user):
+        token = super().get_token(user)
+
+        # Add custom claims
+        token['email'] = user.email
+        # ...
+
+        return token
